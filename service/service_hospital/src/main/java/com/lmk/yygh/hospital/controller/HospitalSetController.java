@@ -1,12 +1,16 @@
 package com.lmk.yygh.hospital.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lmk.yygh.common.result.Result;
 import com.lmk.yygh.hospital.service.HospitalSetService;
-import com.lmk.yygh.model.hospital.HospitalSet;
+import com.lmk.yygh.model.hosp.HospitalSet;
+import com.lmk.yygh.vo.hosp.HospitalSetQueryVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,4 +52,40 @@ public class HospitalSetController {
             return Result.fail();
         }
     }
+
+    /**
+     * 条件查询带分页
+     */
+    @ApiOperation(value = "分页条件查询")
+    @PostMapping("findPageHospSet/{current}/{limit}")
+    public Result findPageHospSet(@PathVariable Long current, @PathVariable Long limit, @RequestBody(required = false) HospitalSetQueryVo hospitalSetQueryVo) {
+        Page<HospitalSet> page = new Page<>(current, limit);
+        //构造条件
+        QueryWrapper<HospitalSet> wrapper = new QueryWrapper<>();
+        String hosname = hospitalSetQueryVo.getHosname();
+        String hoscode = hospitalSetQueryVo.getHoscode();
+        if (!StringUtils.isEmpty(hosname)) {
+            wrapper.like("hosname", hosname);
+        }
+        if (!StringUtils.isEmpty(hoscode)) {
+            wrapper.eq("hoscode", hoscode);
+        }
+        Page<HospitalSet> hospitalSetPage = hospitalSetService.page(page, wrapper);
+        return Result.ok(hospitalSetPage);
+    }
+    /**
+     * 添加医院设置
+     */
+
+    /**
+     * 根据id获取医院设置
+     */
+
+    /**
+     * 修改医院设置
+     */
+
+    /**
+     * 批量删除医院设置
+     */
 }

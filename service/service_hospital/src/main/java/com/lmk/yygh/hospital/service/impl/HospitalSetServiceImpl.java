@@ -3,7 +3,7 @@ package com.lmk.yygh.hospital.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lmk.yygh.hospital.mapper.HospitalSetMapper;
 import com.lmk.yygh.hospital.service.HospitalSetService;
-import com.lmk.yygh.model.hospital.HospitalSet;
+import com.lmk.yygh.model.hosp.HospitalSet;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,6 +12,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class HospitalSetServiceImpl  extends ServiceImpl<HospitalSetMapper, HospitalSet> implements HospitalSetService {
-    
+
 
 }

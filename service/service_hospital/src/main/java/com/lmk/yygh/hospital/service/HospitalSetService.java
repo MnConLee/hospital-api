@@ -1,7 +1,7 @@
 package com.lmk.yygh.hospital.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.lmk.yygh.model.hospital.HospitalSet;
+import com.lmk.yygh.model.hosp.HospitalSet;
 
 /**
  * @author 李明康

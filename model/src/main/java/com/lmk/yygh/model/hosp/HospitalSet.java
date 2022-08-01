@@ -1,4 +1,4 @@
-package com.lmk.yygh.model.hospital;
+package com.lmk.yygh.model.hosp;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;

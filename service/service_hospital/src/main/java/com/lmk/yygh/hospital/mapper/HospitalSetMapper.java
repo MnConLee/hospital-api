@@ -2,7 +2,7 @@ package com.lmk.yygh.hospital.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.lmk.yygh.model.hospital.HospitalSet;
+import com.lmk.yygh.model.hosp.HospitalSet;
 
 /**
  * @author 李明康
