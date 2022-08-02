@@ -16,18 +16,19 @@ import java.util.Map;
  */
 @Data
 public class BaseEntity implements Serializable {
+
     @ApiModelProperty(value = "id")
     @TableId(type = IdType.AUTO)
     private Long id;
 
     @ApiModelProperty(value = "创建时间")
-    @JsonFormat(pattern = "yyyy-MM-dd:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @TableField("create_time")
     private Date createTime;
 
     @ApiModelProperty(value = "更新时间")
     @TableField("update_time")
-    private Data updateTime;
+    private Date updateTime;
 
     @ApiModelProperty(value = "逻辑删除(1:已删除，0:未删除)")
     @TableLogic
@@ -36,6 +37,6 @@ public class BaseEntity implements Serializable {
 
     @ApiModelProperty(value = "其他参数")
     @TableField(exist = false)
-    private Map<String, Object> param = new HashMap<>();
+    private Map<String,Object> param = new HashMap<>();
 
 }

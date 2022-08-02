@@ -15,6 +15,7 @@ import lombok.Data;
 @ApiModel(description = "医院设置")
 @TableName("hospital_set")
 public class HospitalSet extends BaseEntity {
+
   private static final long serialVersionUID = 1L;
 
   @ApiModelProperty(value = "医院名称")
@@ -29,7 +30,7 @@ public class HospitalSet extends BaseEntity {
   @TableField("api_url")
   private String apiUrl;
 
-  @ApiModelProperty(value = "签名密钥")
+  @ApiModelProperty(value = "签名秘钥")
   @TableField("sign_key")
   private String signKey;
 
@@ -37,12 +38,11 @@ public class HospitalSet extends BaseEntity {
   @TableField("contacts_name")
   private String contactsName;
 
-  @ApiModelProperty(value = "联系人电话")
+  @ApiModelProperty(value = "联系人手机")
   @TableField("contacts_phone")
   private String contactsPhone;
 
   @ApiModelProperty(value = "状态")
   @TableField("status")
-  private long status;
-
+  private Integer status;
 }

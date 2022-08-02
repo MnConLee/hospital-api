@@ -31,8 +31,8 @@ public class MybatisPlusConfig {
      * 乐观锁配置
      * @return
      */
-    @Bean
-    public OptimisticLockerInterceptor optimisticLockerInterceptor() {
-        return new OptimisticLockerInterceptor();
-    }
+    // @Bean
+    // public OptimisticLockerInterceptor optimisticLockerInterceptor() {
+    //     return new OptimisticLockerInterceptor();
+    // }
 }

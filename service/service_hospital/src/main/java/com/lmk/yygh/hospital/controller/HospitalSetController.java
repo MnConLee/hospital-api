@@ -3,6 +3,7 @@ package com.lmk.yygh.hospital.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lmk.yygh.common.result.Result;
+import com.lmk.yygh.common.utils.MD5;
 import com.lmk.yygh.hospital.service.HospitalSetService;
 import com.lmk.yygh.model.hosp.HospitalSet;
 import com.lmk.yygh.vo.hosp.HospitalSetQueryVo;
@@ -14,6 +15,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Random;
 
 /**
  * @author 李明康
@@ -38,17 +40,18 @@ public class HospitalSetController {
 
     /**
      * 逻辑删除医院设置
+     *
      * @param id
      * @return
      */
     @ApiOperation(value = "逻辑删除医院设置")
     @DeleteMapping("{id}")
-    @ApiParam(name = "id",value = "医院设置id",required = true)
+    @ApiParam(name = "id", value = "医院设置id", required = true)
     public Result removeHospSet(@PathVariable Long id) {
         boolean flag = hospitalSetService.removeById(id);
         if (flag) {
             return Result.ok();
-        }else {
+        } else {
             return Result.fail();
         }
     }
@@ -73,10 +76,27 @@ public class HospitalSetController {
         Page<HospitalSet> hospitalSetPage = hospitalSetService.page(page, wrapper);
         return Result.ok(hospitalSetPage);
     }
+
     /**
      * 添加医院设置
      */
-
+    @ApiOperation(value = "添加医院设置")
+    @PostMapping("saveHospitalSet")
+    public Result saveHospitalSet(@RequestBody HospitalSet hospitalSet) {
+        //设置状态码
+        hospitalSet.setStatus(1);
+        //签名密钥
+        Random random = new Random();
+        hospitalSet.setSignKey(MD5.encrypt(System.currentTimeMillis()
+                + "" + random.nextInt(1000)));
+        //调用service
+        boolean save = hospitalSetService.save(hospitalSet);
+        if (save) {
+            return Result.ok();
+        } else {
+            return Result.fail();
+        }
+    }
     /**
      * 根据id获取医院设置
      */
