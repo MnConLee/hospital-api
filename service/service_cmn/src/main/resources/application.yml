@@ -1,0 +1,52 @@
+# 开启sentinel
+feign:
+    sentinel:
+        enabled: true
+## 配置mapper地址
+#mybatis-plus:
+#    mapper-locations: classpath:com/lmk/yygh/mapper/xml/*.xml
+server:
+    # 服务端口
+    port: 8202
+spring:
+    application:
+        # 服务名
+        name: service-cmn
+    # SpringCloud配置
+#    cloud:
+#        # nacos配置
+#        nacos:
+#            discovery:
+#                server-addr: 127.0.0.1:8848
+#        # sentinel配置
+#        sentinel:
+#            transport:
+#                dashboard: http://127.0.0.1:8858
+#    data:
+#        # mongodb配置
+#        mongodb:
+#            database: yygh_hosp
+#            host: 192.168.44.163
+#            port: 27017
+    # 数据库配置
+    datasource:
+        driver-class-name: com.mysql.jdbc.Driver
+        password: root
+        url: jdbc:mysql:///yygh_hosp?characterEncoding=utf-8&useSSL=false
+        username: root
+    # 返回json的全局时间格式
+    jackson:
+        date-format: yyyy-MM-dd HH:mm:ss
+        time-zone: GMT+8
+    profiles:
+        # 环境设置
+        active: dev
+#    # rabbitMQ配置
+#    rabbitmq:
+#        host: 127.0.0.1
+#        password: guest
+#        port: 5672
+#        username: guest
+
+#logging:
+#    level: debug

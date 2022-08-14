@@ -24,6 +24,7 @@ import java.util.Random;
 @Api(tags = "医院设置管理")
 @RestController
 @RequestMapping("/admin/hosp/hospitalSet")
+@CrossOrigin
 public class HospitalSetController {
     @Autowired
     private HospitalSetService hospitalSetService;
@@ -115,9 +116,10 @@ public class HospitalSetController {
      * @return
      */
     @ApiOperation(value = "根据id获取医院设置")
-    @PostMapping("getHospSet/{id}")
+    @GetMapping("getHospSet/{id}")
     public Result getHospSet(@PathVariable Long id) {
         HospitalSet hospitalSet = hospitalSetService.getById(id);
+        System.out.println(hospitalSet);
         return Result.ok(hospitalSet);
     }
 
@@ -145,7 +147,7 @@ public class HospitalSetController {
      * @return
      */
     @ApiOperation(value = "批量删除医院设置")
-    @PostMapping("batchRemove")
+    @DeleteMapping("batchRemove")
     public Result batchRemoveHospitalSet(@RequestBody List<Long> idList) {
         boolean flag = hospitalSetService.removeByIds(idList);
         return Result.ok();
@@ -159,7 +161,7 @@ public class HospitalSetController {
      * @return
      */
     @ApiOperation(value = "医院设置锁定和解锁")
-    @PostMapping("lockHospitalSet/{id}/{status}")
+    @PutMapping("lockHospitalSet/{id}/{status}")
     public Result lockHospitalSet(@PathVariable Long id,
                                   @PathVariable Integer status) {
         HospitalSet hospitalSet = hospitalSetService.getById(id);
