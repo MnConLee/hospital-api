@@ -7,7 +7,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -21,6 +23,29 @@ import java.util.List;
 public class DictController {
     @Autowired
     private DictService dictService;
+
+    /**
+     * 下载数据字典文件Excel
+     * @param response
+     * @return
+     */
+    @GetMapping("exportData")
+    public Result exportDict(HttpServletResponse response){
+        dictService.exportDictData(response);
+        return Result.ok();
+    }
+
+    /**
+     * 上传数据字典文件
+     * @param file
+     * @return
+     */
+    @PostMapping("importData")
+    public Result importDict(MultipartFile file) {
+        dictService.importDictDaata(file);
+        return Result.ok();
+    }
+
 
     /**
      * 根据数据id查询子数据

@@ -2,7 +2,9 @@ package com.lmk.yygh.cmn.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.lmk.yygh.model.cmn.Dict;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -16,4 +18,16 @@ public interface DictService extends IService<Dict> {
      * @return
      */
     List<Dict> findChild(Long id);
+
+    /**
+     * 下载数据字典文件
+     * @param response
+     */
+    void exportDictData(HttpServletResponse response);
+
+    /**
+     * 上传数据字典文件
+     * @param file
+     */
+    void importDictDaata(MultipartFile file);
 }
