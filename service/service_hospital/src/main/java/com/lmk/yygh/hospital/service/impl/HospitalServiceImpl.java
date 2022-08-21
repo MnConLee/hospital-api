@@ -27,8 +27,6 @@ public class HospitalServiceImpl implements HospitalService {
         //判断是否存在数据
         String hoscode = hospital.getHoscode();
         Hospital hospitalExist = hospitalRepository.getHospitalByHoscode(hoscode);
-        System.out.println(hospitalExist);
-        System.out.println(hospital);
         //如果存在，进行修改
         if (hospitalExist != null) {
             hospital.setStatus(hospitalExist.getStatus());

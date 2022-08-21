@@ -119,7 +119,6 @@ public class HospitalSetController {
     @GetMapping("getHospSet/{id}")
     public Result getHospSet(@PathVariable Long id) {
         HospitalSet hospitalSet = hospitalSetService.getById(id);
-        System.out.println(hospitalSet);
         return Result.ok(hospitalSet);
     }
 
