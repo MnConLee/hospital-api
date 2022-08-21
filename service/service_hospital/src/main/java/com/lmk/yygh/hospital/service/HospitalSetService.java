@@ -8,4 +8,5 @@ import com.lmk.yygh.model.hosp.HospitalSet;
  * @create 2022/8/1 10:09
  */
 public interface HospitalSetService extends IService<HospitalSet> {
+    String getSignKey(String hoscode);
 }
