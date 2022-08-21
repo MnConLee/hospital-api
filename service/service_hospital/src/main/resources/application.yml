@@ -9,6 +9,9 @@ server:
     # 服务端口
     port: 8201
 spring:
+    data:
+        mongodb:
+          uri: mongodb://localhost:27017/yygh_hosp
     application:
         # 服务名
         name: service-hosp

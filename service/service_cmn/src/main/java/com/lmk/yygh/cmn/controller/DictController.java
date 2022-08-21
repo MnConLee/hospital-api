@@ -42,7 +42,7 @@ public class DictController {
      */
     @PostMapping("importData")
     public Result importDict(MultipartFile file) {
-        dictService.importDictDaata(file);
+        dictService.importDictData(file);
         return Result.ok();
     }
 

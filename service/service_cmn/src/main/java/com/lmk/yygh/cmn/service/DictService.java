@@ -29,5 +29,5 @@ public interface DictService extends IService<Dict> {
      * 上传数据字典文件
      * @param file
      */
-    void importDictDaata(MultipartFile file);
+    void importDictData(MultipartFile file);
 }
