@@ -5,6 +5,7 @@ import com.lmk.yygh.common.helper.HttpRequestHelper;
 import com.lmk.yygh.common.result.Result;
 import com.lmk.yygh.common.result.ResultCodeEnum;
 import com.lmk.yygh.common.utils.MD5;
+import com.lmk.yygh.hospital.service.DepartmentService;
 import com.lmk.yygh.hospital.service.HospitalService;
 import com.lmk.yygh.hospital.service.HospitalSetService;
 import com.lmk.yygh.model.hosp.Hospital;
@@ -28,6 +29,8 @@ public class ApiController {
     private HospitalService hospitalService;
     @Autowired
     private HospitalSetService hospitalSetService;
+    @Autowired
+    private DepartmentService departmentService;
 
     /**
      * 上传医院接口
@@ -50,10 +53,13 @@ public class ApiController {
         return Result.ok();
     }
 
+    /**
+     * 查询医院信息
+     * @param request
+     * @return
+     */
     @PostMapping("hospital/show")
     public Result getHospital(HttpServletRequest request) {
-
-
         //获取传递过来医院信息
         Map<String, String[]> requestMap = request.getParameterMap();
         Map<String, Object> paramMap = HttpRequestHelper.switchMap(requestMap);
@@ -63,5 +69,15 @@ public class ApiController {
         //医院编号查询
         Hospital hospital = hospitalService.getByHoscode(hoscode);
         return Result.ok(hospital);
+    }
+
+    @PostMapping("saveDepartment")
+    public Result saveDepartment(HttpServletRequest request) {
+        //获取传递过来科室信息
+        Map<String, String[]> requestMap = request.getParameterMap();
+        Map<String, Object> paramMap = HttpRequestHelper.switchMap(requestMap);
+        hospitalSetService.eqSign(paramMap);
+        departmentService.save(paramMap);
+        return Result.ok();
     }
 }
