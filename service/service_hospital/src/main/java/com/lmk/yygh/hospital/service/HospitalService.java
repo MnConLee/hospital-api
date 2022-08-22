@@ -3,6 +3,7 @@ package com.lmk.yygh.hospital.service;
 import com.lmk.yygh.model.hosp.Hospital;
 import com.lmk.yygh.vo.hosp.HospitalQueryVo;
 import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 

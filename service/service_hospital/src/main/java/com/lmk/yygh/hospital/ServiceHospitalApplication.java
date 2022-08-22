@@ -3,6 +3,7 @@ package com.lmk.yygh.hospital;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 
 /**
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @ComponentScan(basePackages = "com.lmk")
 @EnableDiscoveryClient
+@EnableFeignClients(basePackages = "com.lmk")
 public class ServiceHospitalApplication {
      public static void main(String[] args) {
            SpringApplication.run(ServiceHospitalApplication.class, args);

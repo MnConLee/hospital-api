@@ -107,7 +107,7 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
             Dict dict = baseMapper.selectOne(wrapper);
             return dict.getName();
         } else {
-            Dict codeDict = this.getDictByDictCode(dictCode)
+            Dict codeDict = this.getDictByDictCode(dictCode);
             Long parent_id = codeDict.getId();
             Dict finalDict = baseMapper.selectOne(new QueryWrapper<Dict>()
                     .eq("parent_id", parent_id)

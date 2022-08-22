@@ -1,6 +1,7 @@
 package com.lmk.yygh.hospital.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.lmk.yygh.cmn.client.DictFeignClient;
 import com.lmk.yygh.hospital.repository.HospitalRepository;
 import com.lmk.yygh.hospital.service.HospitalService;
 import com.lmk.yygh.model.hosp.Hospital;
@@ -21,6 +22,8 @@ import java.util.Map;
 public class HospitalServiceImpl implements HospitalService {
     @Autowired
     private HospitalRepository hospitalRepository;
+    @Autowired
+    private DictFeignClient dictFeignClient;
 
     /**
      * 上传医院
@@ -68,6 +71,7 @@ public class HospitalServiceImpl implements HospitalService {
 
     /**
      * 医院列表
+     *
      * @param page
      * @param limit
      * @param hospitalQueryVo
@@ -79,10 +83,32 @@ public class HospitalServiceImpl implements HospitalService {
         ExampleMatcher matcher = ExampleMatcher.matching().withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
                 .withIgnoreCase(true);
         Hospital hospital = new Hospital();
-        BeanUtils.copyProperties(hospitalQueryVo,hospital);
+        BeanUtils.copyProperties(hospitalQueryVo, hospital);
         //创建对象
         Example<Hospital> example = Example.of(hospital, matcher);
-        Page<Hospital> all = hospitalRepository.findAll(example, pageable);
-        return all;
+        Page<Hospital> pages = hospitalRepository.findAll(example, pageable);
+        //获取查询list集合，遍历进行医院等级封装
+        pages.getContent().stream().forEach(item -> {
+            this.setHospitalHosType(item);
+        });
+        return pages;
+    }
+
+    /**
+     * 获取查询list集合，遍历进行医院等级封装
+     *
+     * @param hospital
+     * @return
+     */
+    private Hospital setHospitalHosType(Hospital hospital) {
+        //查询省 市 区
+        String provinceString = dictFeignClient.getName(hospital.getProvinceCode());
+        String cityString = dictFeignClient.getName(hospital.getCityCode());
+        String districtString = dictFeignClient.getName(hospital.getDistrictCode());
+        //根据dictCode和value获取医院等级名称
+        String hostypeString = dictFeignClient.getName("Hostype", hospital.getHostype());
+        hospital.getParam().put("fullAddress", provinceString + cityString + districtString);
+        hospital.getParam().put("hostypeString", hostypeString);
+        return hospital;
     }
 }
