@@ -32,11 +32,11 @@ spring:
                 min-idle: 0
             password:
     # SpringCloud配置
-#    cloud:
-#        # nacos配置
-#        nacos:
-#            discovery:
-#                server-addr: 127.0.0.1:8848
+    cloud:
+        # nacos配置
+        nacos:
+            discovery:
+                server-addr: 127.0.0.1:8848
 #        # sentinel配置
 #        sentinel:
 #            transport:

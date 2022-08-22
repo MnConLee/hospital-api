@@ -59,4 +59,29 @@ public class DictController {
         return Result.ok(list);
     }
 
+    /**
+     * 返回数据字典名称带dictcode，如医院等级
+     * @param dictCode
+     * @param value
+     * @return
+     */
+    @GetMapping("getName/{dictCode}/{value}")
+    public String getName(@PathVariable String dictCode,
+                          @PathVariable String value){
+        String dictName = dictService.getDictName(dictCode, value);
+        return dictName;
+    }
+
+    /**
+     * 返回数据字典名称不带dictcode，如民族和区
+     * @param value
+     * @return
+     */
+    @GetMapping("getName/{value}")
+    public String getName(@PathVariable String value){
+        String dictName = dictService.getDictName("", value);
+        return dictName;
+    }
+
+
 }

@@ -15,12 +15,12 @@ spring:
     application:
         # 服务名
         name: service-hosp
-    # SpringCloud配置
-#    cloud:
-#        # nacos配置
-#        nacos:
-#            discovery:
-#                server-addr: 127.0.0.1:8848
+#     SpringCloud配置
+    cloud:
+        # nacos配置
+        nacos:
+            discovery:
+                server-addr: 127.0.0.1:8848
 #        # sentinel配置
 #        sentinel:
 #            transport:

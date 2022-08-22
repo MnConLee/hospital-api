@@ -4,7 +4,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.lmk.yygh.hospital.repository.HospitalRepository;
 import com.lmk.yygh.hospital.service.HospitalService;
 import com.lmk.yygh.model.hosp.Hospital;
+import com.lmk.yygh.vo.hosp.HospitalQueryVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -21,6 +24,7 @@ public class HospitalServiceImpl implements HospitalService {
 
     /**
      * 上传医院
+     *
      * @param paramMap
      */
     @Override
@@ -50,9 +54,35 @@ public class HospitalServiceImpl implements HospitalService {
 
     }
 
+    /**
+     * 查询医院信息
+     *
+     * @param hoscode
+     * @return
+     */
     @Override
     public Hospital getByHoscode(String hoscode) {
         Hospital hospital = hospitalRepository.getHospitalByHoscode(hoscode);
         return hospital;
+    }
+
+    /**
+     * 医院列表
+     * @param page
+     * @param limit
+     * @param hospitalQueryVo
+     * @return
+     */
+    @Override
+    public Page selectHospPage(Integer page, Integer limit, HospitalQueryVo hospitalQueryVo) {
+        Pageable pageable = PageRequest.of(page - 1, limit);
+        ExampleMatcher matcher = ExampleMatcher.matching().withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
+                .withIgnoreCase(true);
+        Hospital hospital = new Hospital();
+        BeanUtils.copyProperties(hospitalQueryVo,hospital);
+        //创建对象
+        Example<Hospital> example = Example.of(hospital, matcher);
+        Page<Hospital> all = hospitalRepository.findAll(example, pageable);
+        return all;
     }
 }

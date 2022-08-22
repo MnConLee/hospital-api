@@ -30,4 +30,6 @@ public interface DictService extends IService<Dict> {
      * @param file
      */
     void importDictData(MultipartFile file);
+
+    String getDictName(String dictCode, String value);
 }
