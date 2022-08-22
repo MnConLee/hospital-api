@@ -34,7 +34,6 @@ public class DepartmentServiceImpl implements DepartmentService {
         Department department = JSONObject.parseObject(paramMapString, Department.class);
         Department departmentExist =
                 departmentRepository.getDepartmentByHoscodeAndDepcode(department.getHoscode(), department.getDepcode());
-        System.out.println("departmentExist"+departmentExist);
         if (departmentExist != null) {
             department.setId(departmentExist.getId());
             department.setUpdateTime(new Date());

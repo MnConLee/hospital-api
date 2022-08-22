@@ -22,6 +22,11 @@ import java.util.Map;
 public class HospitalSetServiceImpl  extends ServiceImpl<HospitalSetMapper, HospitalSet> implements HospitalSetService {
     @Autowired
     private HospitalSetService hospitalSetService;
+
+    /**
+     * 判断签名是否一致
+     * @param paramMap
+     */
     @Override
     public void eqSign(Map<String, Object> paramMap) {
         //获取医院编号

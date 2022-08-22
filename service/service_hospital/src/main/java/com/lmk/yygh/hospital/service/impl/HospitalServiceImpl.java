@@ -19,6 +19,10 @@ public class HospitalServiceImpl implements HospitalService {
     @Autowired
     private HospitalRepository hospitalRepository;
 
+    /**
+     * 上传医院
+     * @param paramMap
+     */
     @Override
     public void save(Map<String, Object> paramMap) {
         //把参数map集合转换对象
