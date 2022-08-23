@@ -26,17 +26,19 @@ public class DictController {
 
     /**
      * 下载数据字典文件Excel
+     *
      * @param response
      * @return
      */
     @GetMapping("exportData")
-    public Result exportDict(HttpServletResponse response){
+    public Result exportDict(HttpServletResponse response) {
         dictService.exportDictData(response);
         return Result.ok();
     }
 
     /**
      * 上传数据字典文件
+     *
      * @param file
      * @return
      */
@@ -49,6 +51,7 @@ public class DictController {
 
     /**
      * 根据数据id查询子数据
+     *
      * @param id
      * @return
      */
@@ -61,27 +64,41 @@ public class DictController {
 
     /**
      * 返回数据字典名称带dictcode，如医院等级
+     *
      * @param dictCode
      * @param value
      * @return
      */
     @GetMapping("getName/{dictCode}/{value}")
     public String getName(@PathVariable String dictCode,
-                          @PathVariable String value){
+                          @PathVariable String value) {
         String dictName = dictService.getDictName(dictCode, value);
         return dictName;
     }
 
     /**
      * 返回数据字典名称不带dictcode，如民族和区
+     *
      * @param value
      * @return
      */
     @GetMapping("getName/{value}")
-    public String getName(@PathVariable String value){
+    public String getName(@PathVariable String value) {
         String dictName = dictService.getDictName("", value);
         return dictName;
     }
 
+
+    /**
+     * 根据dictCode获取下级节点
+     * @param dictCode
+     * @return
+     */
+    @ApiOperation(value = "根据dictCode获取下级节点")
+    @GetMapping("findByDictCode/{dictCode}")
+    public Result findByDictCode(@PathVariable String dictCode){
+        List<Dict> list = dictService.findByDictCode(dictCode);
+        return Result.ok(list);
+    }
 
 }

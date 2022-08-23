@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author 李明康
@@ -94,6 +95,14 @@ public class HospitalServiceImpl implements HospitalService {
         return pages;
     }
 
+    @Override
+    public void updateStatus(String id, Integer status) {
+        Hospital hospital = hospitalRepository.findById(id).get();
+        hospital.setStatus(status);
+        hospital.setUpdateTime(new Date());
+        hospitalRepository.save(hospital);
+    }
+
     /**
      * 获取查询list集合，遍历进行医院等级封装
      *
@@ -112,3 +121,4 @@ public class HospitalServiceImpl implements HospitalService {
         return hospital;
     }
 }
+

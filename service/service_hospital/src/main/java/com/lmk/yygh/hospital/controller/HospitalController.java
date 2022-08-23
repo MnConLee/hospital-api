@@ -3,6 +3,7 @@ package com.lmk.yygh.hospital.controller;
 import com.lmk.yygh.common.result.Result;
 import com.lmk.yygh.hospital.service.HospitalService;
 import com.lmk.yygh.vo.hosp.HospitalQueryVo;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,14 @@ public class HospitalController {
                            HospitalQueryVo hospitalQueryVo){
         Page pageModel = hospitalService.selectHospPage(page, limit, hospitalQueryVo);
         return Result.ok(pageModel);
+    }
+
+    @ApiOperation(value = "更新医院上线状态")
+    @GetMapping("updateHospStatus/{id}/{status}")
+    public Result updateHospStatus(@PathVariable String id,@PathVariable Integer status){
+        hospitalService.updateStatus(id, status);
+        return Result.ok();
+
     }
 
 }

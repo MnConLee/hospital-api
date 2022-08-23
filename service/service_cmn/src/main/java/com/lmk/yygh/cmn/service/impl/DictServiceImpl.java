@@ -116,6 +116,15 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
         }
     }
 
+    @Override
+    public List<Dict> findByDictCode(String dictCode) {
+        //根据dictcode获取对应id
+        Dict dict = this.getDictByDictCode(dictCode);
+        //根据id获取直接点
+        List<Dict> dictList = this.findChild(dict.getId());
+        return dictList;
+    }
+
     /**
      * 得到dict
      * @param dictCode
