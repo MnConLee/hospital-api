@@ -12,6 +12,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -72,7 +73,6 @@ public class HospitalServiceImpl implements HospitalService {
 
     /**
      * 医院列表
-     *
      * @param page
      * @param limit
      * @param hospitalQueryVo
@@ -103,9 +103,27 @@ public class HospitalServiceImpl implements HospitalService {
         hospitalRepository.save(hospital);
     }
 
+    @Override
+    public Map<String, Object> getHospById(String id) {
+        HashMap<String, Object> result = new HashMap<>();
+        Hospital hospital = this.setHospitalHosType(hospitalRepository.findById(id).get());
+        result.put("hospital", hospital);
+        result.put("bookingRule", hospital.getBookingRule());
+        hospital.setBookingRule(null);
+        return result;
+    }
+
+    @Override
+    public String getHospName(String hoscode) {
+        Hospital hospital = hospitalRepository.getHospitalByHoscode(hoscode);
+        if (hospital != null) {
+            return hospital.getHosname();
+        }
+        return null;
+    }
+
     /**
      * 获取查询list集合，遍历进行医院等级封装
-     *
      * @param hospital
      * @return
      */
