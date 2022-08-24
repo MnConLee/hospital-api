@@ -95,6 +95,11 @@ public class HospitalServiceImpl implements HospitalService {
         return pages;
     }
 
+    /**
+     * 更新医院状态
+     * @param id
+     * @param status
+     */
     @Override
     public void updateStatus(String id, Integer status) {
         Hospital hospital = hospitalRepository.findById(id).get();
@@ -103,6 +108,11 @@ public class HospitalServiceImpl implements HospitalService {
         hospitalRepository.save(hospital);
     }
 
+    /**
+     * 同构id查询医院信息
+     * @param id
+     * @return
+     */
     @Override
     public Map<String, Object> getHospById(String id) {
         HashMap<String, Object> result = new HashMap<>();
@@ -113,6 +123,11 @@ public class HospitalServiceImpl implements HospitalService {
         return result;
     }
 
+    /**
+     * 获取医院名字
+     * @param hoscode
+     * @return
+     */
     @Override
     public String getHospName(String hoscode) {
         Hospital hospital = hospitalRepository.getHospitalByHoscode(hoscode);

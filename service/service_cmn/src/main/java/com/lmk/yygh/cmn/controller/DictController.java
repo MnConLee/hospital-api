@@ -16,7 +16,6 @@ import java.util.List;
  * @author 李明康
  * @create 2022/8/14 15:29
  */
-@CrossOrigin
 @Api(value = "数据字典接口")
 @RestController
 @RequestMapping("/admin/cmn/dict")

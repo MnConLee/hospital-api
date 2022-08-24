@@ -2,6 +2,7 @@ package com.lmk.yygh.hospital.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.lmk.yygh.hospital.repository.ScheduleRepository;
+import com.lmk.yygh.hospital.service.DepartmentService;
 import com.lmk.yygh.hospital.service.HospitalService;
 import com.lmk.yygh.hospital.service.ScheduleService;
 import com.lmk.yygh.model.hosp.Schedule;
@@ -35,6 +36,8 @@ public class ScheduleServiceImpl implements ScheduleService {
     private MongoTemplate mongoTemplate;
     @Autowired
     private HospitalService hospitalService;
+    @Autowired
+    private DepartmentService departmentService;
     /**
      * 上传科室信息
      * @param paramMap
@@ -97,6 +100,14 @@ public class ScheduleServiceImpl implements ScheduleService {
         }
     }
 
+    /**
+     * 查出排班日期，星期，当日总数，单日可预约和剩余，医院名称
+     * @param page
+     * @param limit
+     * @param hoscode
+     * @param depcode
+     * @return
+     */
     @Override
     public Map<String, Object> getScheduleRule(Long page, Long limit, String hoscode, String depcode) {
         //查出排班数据
@@ -146,6 +157,34 @@ public class ScheduleServiceImpl implements ScheduleService {
         baseMap.put("hosname", hosName);
         result.put("baseMap", baseMap);
         return result;
+    }
+
+    /**
+     * 查询排班详情信息
+     * @param hoscode
+     * @param depcode
+     * @param workDate
+     * @return
+     */
+    @Override
+    public List<Schedule> getScheduleDetail(String hoscode, String depcode, String workDate) {
+        List<Schedule> scheduleList =
+                scheduleRepository.findScheduleByHoscodeAndDepcodeAndWorkDate(hoscode,depcode,new DateTime(workDate).toDate());
+        //遍历list集合，设置其他值
+        scheduleList.stream().forEach(item -> {
+            this.packageSchedule(item);
+        });
+        return scheduleList;
+    }
+
+    /**
+     * 额外排班信息封装
+     * @param schedule
+     */
+    private void packageSchedule(Schedule schedule) {
+        schedule.getParam().put("hosname", hospitalService.getHospName(schedule.getHoscode()));
+        schedule.getParam().put("depname", departmentService.getDepName(schedule.getHoscode(), schedule.getDepcode()));
+        schedule.getParam().put("dayOfWeek", this.getDayOfWeek(new DateTime(schedule.getWorkDate())));
     }
 
     /**

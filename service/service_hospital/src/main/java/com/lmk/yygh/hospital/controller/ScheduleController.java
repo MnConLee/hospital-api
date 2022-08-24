@@ -2,10 +2,12 @@ package com.lmk.yygh.hospital.controller;
 
 import com.lmk.yygh.common.result.Result;
 import com.lmk.yygh.hospital.service.ScheduleService;
+import com.lmk.yygh.model.hosp.Schedule;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,7 +16,6 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/admin/hosp/schedule")
-@CrossOrigin
 public class ScheduleController {
     @Autowired
     private ScheduleService scheduleService;
@@ -38,4 +39,12 @@ public class ScheduleController {
     }
 
 
+    @ApiOperation(value = "查询排班详细信息")
+    @GetMapping("getScheduleDetail/{hoscode}/{depcode}/{workDate}")
+    public Result getScheduleDetail(@PathVariable String hoscode,
+                                    @PathVariable String depcode,
+                                    @PathVariable String workDate){
+        List<Schedule> list = scheduleService.getScheduleDetail(hoscode, depcode, workDate);
+        return Result.ok(list);
+    }
 }

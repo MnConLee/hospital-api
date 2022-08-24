@@ -16,11 +16,15 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/admin/hosp/department")
-@CrossOrigin
 public class DepartmentController {
     @Autowired
     private DepartmentService departmentService;
 
+    /**
+     * 查询医院所有科室列表
+     * @param hoscode
+     * @return
+     */
     @ApiOperation(value = "查询医院所有科室列表")
     @GetMapping("getDeptList/{hoscode}")
     public Result getDeptList(@PathVariable String hoscode){
