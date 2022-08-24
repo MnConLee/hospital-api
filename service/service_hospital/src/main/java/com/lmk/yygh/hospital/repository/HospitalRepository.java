@@ -4,6 +4,8 @@ import com.lmk.yygh.model.hosp.Hospital;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @author 李明康
  * @create 2022/8/21 14:20
@@ -17,4 +19,6 @@ public interface HospitalRepository extends MongoRepository<Hospital,String> {
      * @return
      */
     Hospital getHospitalByHoscode(String hoscode);
+
+    List<Hospital> findHospitalByHosnameLike(String hosname);
 }

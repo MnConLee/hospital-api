@@ -11,10 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author 李明康
@@ -79,7 +76,7 @@ public class HospitalServiceImpl implements HospitalService {
      * @return
      */
     @Override
-    public Page selectHospPage(Integer page, Integer limit, HospitalQueryVo hospitalQueryVo) {
+    public Page<Hospital> selectHospPage(Integer page, Integer limit, HospitalQueryVo hospitalQueryVo) {
         Pageable pageable = PageRequest.of(page - 1, limit);
         ExampleMatcher matcher = ExampleMatcher.matching().withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
                 .withIgnoreCase(true);
@@ -135,6 +132,16 @@ public class HospitalServiceImpl implements HospitalService {
             return hospital.getHosname();
         }
         return null;
+    }
+
+    /**
+     * 根据医院名称查询医院
+     * @param hosname
+     * @return
+     */
+    @Override
+    public List<Hospital> findByHosname(String hosname) {
+        return hospitalRepository.findHospitalByHosnameLike(hosname);
     }
 
     /**

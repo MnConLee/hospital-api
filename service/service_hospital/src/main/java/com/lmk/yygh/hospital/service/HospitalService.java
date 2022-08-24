@@ -5,6 +5,7 @@ import com.lmk.yygh.vo.hosp.HospitalQueryVo;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,11 +17,13 @@ public interface HospitalService {
 
     Hospital getByHoscode(String hoscode);
 
-    Page selectHospPage(Integer page, Integer limit, HospitalQueryVo hospitalQueryVo);
+    Page<Hospital> selectHospPage(Integer page, Integer limit, HospitalQueryVo hospitalQueryVo);
 
     void updateStatus(String id, Integer status);
 
     Map<String, Object> getHospById(String id);
 
     String getHospName(String hoscode);
+
+    List<Hospital> findByHosname(String hosname);
 }
