@@ -52,7 +52,6 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
 
     /**
      * 数据字典下载操作
-     *
      * @param response
      */
     @Override
@@ -116,6 +115,11 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
         }
     }
 
+    /**
+     * 根据dictcode查出对应数据字典集合
+     * @param dictCode
+     * @return
+     */
     @Override
     public List<Dict> findByDictCode(String dictCode) {
         //根据dictcode获取对应id
@@ -132,15 +136,13 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
      */
     private Dict getDictByDictCode(String dictCode){
         QueryWrapper<Dict> wrapper = new QueryWrapper<>();
-        wrapper.eq("dict_code", dictCode);
-        Dict codeDict = baseMapper.selectOne(wrapper);
-        return codeDict;
+        wrapper.eq("dict_code",dictCode);
+        return baseMapper.selectOne(wrapper);
     }
 
 
     /**
      * 判断id下面是否有子节点
-     *
      * @param id
      * @return
      */

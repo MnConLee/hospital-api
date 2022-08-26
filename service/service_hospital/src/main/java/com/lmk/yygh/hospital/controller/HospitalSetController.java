@@ -30,7 +30,6 @@ public class HospitalSetController {
 
     /**
      * 查询医院所有表的基本信息
-     *
      * @return
      */
     @ApiOperation(value = "获取所有医院设置信息")

@@ -45,6 +45,11 @@ public class HospApiController {
         return Result.ok(hospitals);
     }
 
+    /**
+     * 根据医院名称查询
+     * @param hosname
+     * @return
+     */
     @ApiOperation(value = "根据医院名称查询")
     @GetMapping("findByHosName/{hosname}")
     public Result findByHosName(@PathVariable String hosname) {
@@ -52,6 +57,11 @@ public class HospApiController {
         return Result.ok(list);
     }
 
+    /**
+     * 根据医院编号获取科室
+     * @param hoscode
+     * @return
+     */
     @ApiOperation(value = "根据医院编号获取科室")
     @GetMapping("department/{hoscode}")
     public Result index(@PathVariable String hoscode){
@@ -59,6 +69,11 @@ public class HospApiController {
         return Result.ok(list);
     }
 
+    /**
+     * 根据医院编号获取医院预约挂号详情
+     * @param hoscode
+     * @return
+     */
     @ApiOperation(value = "根据医院编号获取医院预约挂号详情")
     @GetMapping("findHospDetail/{hoscode}")
     public Result findHospDetailByhoscode(@PathVariable String hoscode) {

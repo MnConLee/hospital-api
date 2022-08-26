@@ -1,0 +1,21 @@
+mybatis-plus:
+    mapper-locations: classpath:com/atguigu/yygh/user/mapper/xml/*.xml
+server:
+    port: 8203
+spring:
+    application:
+        name: service-user
+    cloud:
+        nacos:
+            discovery:
+                server-addr: 127.0.0.1:8848
+    datasource:
+        driver-class-name: com.mysql.jdbc.Driver
+        password: root
+        url: jdbc:mysql:///yygh_user?characterEncoding=utf-8&useSSL=false
+        username: root
+    jackson:
+        date-format: yyyy-MM-dd HH:mm:ss
+        time-zone: GMT+8
+    profiles:
+        active: dev
