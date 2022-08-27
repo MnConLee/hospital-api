@@ -32,3 +32,5 @@ build/
 .vscode/
 #短信发送密钥屏蔽
 /service/service-msm/src/main/java/com/lmk/yygh/msm/service/Impl/
+#阿里云密钥屏蔽
+/service/service_oss/src/main/resources/application.yml

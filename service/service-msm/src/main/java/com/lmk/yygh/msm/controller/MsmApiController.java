@@ -27,6 +27,11 @@ public class MsmApiController {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
+    /**
+     * 发送手机验证码
+     * @param phone
+     * @return
+     */
     @GetMapping("send/{phone}")
     public Result sendCode(@PathVariable String phone) {
         //从redis获取验证码，如果获取获取到，返回ok

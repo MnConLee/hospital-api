@@ -44,21 +44,39 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         if (!code.equals(redisCode)) {
             throw new YyghException(ResultCodeEnum.CODE_ERROR);
         }
-
-        //判断是否为第一次登录
-        QueryWrapper<UserInfo> wrapper = new QueryWrapper<>();
-        wrapper.eq("phone", phone);
-        UserInfo userInfo = baseMapper.selectOne(wrapper);
-        //返回登录信息（返回登录用户名，返回token信息）
-        //第一次登录
-        if (userInfo == null) {
-            userInfo = new UserInfo();
-            userInfo.setName("");
-            userInfo.setPhone(phone);
-            userInfo.setStatus(1);
-            //添加信息
-            baseMapper.insert(userInfo);
+        //如果没有经过微信填充值则走短信
+        UserInfo userInfo = null;
+        //绑定手机号码
+        if(!StringUtils.isEmpty(loginVo.getOpenid())) {
+            userInfo = this.selectWxInfoByOpenid(loginVo.getOpenid());
+            if(null != userInfo) {
+                userInfo.setPhone(loginVo.getPhone());
+                this.updateById(userInfo);
+            } else {
+                throw new YyghException(ResultCodeEnum.DATA_ERROR);
+            }
         }
+
+        //如果userInfo为空，进行正常的手机登录
+        if (userInfo == null) {
+
+            //判断是否为第一次登录
+            QueryWrapper<UserInfo> wrapper = new QueryWrapper<>();
+            wrapper.eq("phone", phone);
+            userInfo = baseMapper.selectOne(wrapper);
+            //返回登录信息（返回登录用户名，返回token信息）
+            //第一次登录
+            if (userInfo == null) {
+                userInfo = new UserInfo();
+                userInfo.setName("");
+                userInfo.setPhone(phone);
+                userInfo.setStatus(1);
+                //添加信息
+                baseMapper.insert(userInfo);
+            }
+        }
+
+
         if (userInfo.getStatus() == 0) {
             throw new YyghException(ResultCodeEnum.LOGIN_DISABLED_ERROR);
         }
