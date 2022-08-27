@@ -49,9 +49,9 @@ public class Patient extends BaseEntity {
 	@TableField("birthdate")
 	private Date birthdate;
 
-	@ApiModelProperty(value = "邮箱账号")
-	@TableField("mail")
-	private String mail;
+	@ApiModelProperty(value = "手机")
+	@TableField("phone")
+	private String phone;
 
 	@ApiModelProperty(value = "是否结婚")
 	@TableField("is_marry")
