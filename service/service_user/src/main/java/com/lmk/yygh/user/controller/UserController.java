@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 /**
  * @author 李明康
  * @create 2022/8/28 9:48
@@ -47,6 +49,29 @@ public class UserController {
     @GetMapping("lock/{userId}/{status}")
     public Result lock(@PathVariable Long userId, @PathVariable Integer status) {
         userInfoService.lock(userId, status);
+        return Result.ok();
+    }
+
+    /**
+     * 用户详情
+     * @param userId
+     * @return
+     */
+    @GetMapping("show/{userId}")
+    public Result show(@PathVariable Long userId) {
+        Map<String, Object> map = userInfoService.show(userId);
+        return Result.ok(map);
+    }
+
+    /**
+     * 认证审批
+     * @param userId
+     * @param authStatus
+     * @return
+     */
+    @GetMapping("approval/{userId}/{authStatus}")
+    public Result approval(@PathVariable Long userId, @PathVariable Integer authStatus) {
+        userInfoService.approval(userId, authStatus);
         return Result.ok();
 
     }

@@ -8,8 +8,10 @@ import com.lmk.yygh.common.exception.YyghException;
 import com.lmk.yygh.common.helper.JwtHelper;
 import com.lmk.yygh.common.result.ResultCodeEnum;
 import com.lmk.yygh.enums.AuthStatusEnum;
+import com.lmk.yygh.model.user.Patient;
 import com.lmk.yygh.model.user.UserInfo;
 import com.lmk.yygh.user.mapper.UserInfoMapper;
+import com.lmk.yygh.user.service.PatientService;
 import com.lmk.yygh.user.service.UserInfoService;
 import com.lmk.yygh.vo.user.LoginVo;
 import com.lmk.yygh.vo.user.UserAuthVo;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,6 +34,8 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
+    @Autowired
+    private PatientService patientService;
     /**
      * 用户手机登录
      *
@@ -174,6 +179,36 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         if (status.intValue() == 0 || status.intValue() == 1) {
             UserInfo userInfo = baseMapper.selectById(userId);
             userInfo.setStatus(status);
+            baseMapper.updateById(userInfo);
+        }
+    }
+
+    /**
+     * 用户详情
+     * @param userId
+     * @return
+     */
+    @Override
+    public Map<String, Object> show(Long userId) {
+        Map<String, Object> map = new HashMap<>();
+        UserInfo userInfo = this.packageUserInfo(baseMapper.selectById(userId));
+        map.put("userInfo", userInfo);
+        //查询就诊人信息
+        List<Patient> patientList = patientService.findAllUserId(userId);
+        map.put("patientList", patientList);
+        return map;
+    }
+
+    /**
+     * 认证审批(2表示通过，-1表示不通过)
+     * @param userId
+     * @param authStatus
+     */
+    @Override
+    public void approval(Long userId, Integer authStatus) {
+        if (authStatus == 2 || authStatus == -1) {
+            UserInfo userInfo = baseMapper.selectById(userId);
+            userInfo.setAuthStatus(authStatus);
             baseMapper.updateById(userInfo);
         }
     }
