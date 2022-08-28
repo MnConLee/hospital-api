@@ -22,6 +22,13 @@ public class UserController {
     @Autowired
     private UserInfoService userInfoService;
 
+    /**
+     * 用户列表
+     * @param page
+     * @param limit
+     * @param userInfoQueryVo
+     * @return
+     */
     @GetMapping("{page}/{limit}")
     public Result list(@PathVariable Long page,
                        @PathVariable Long limit,
@@ -29,6 +36,19 @@ public class UserController {
         Page<UserInfo> pageparam = new Page<>(page, limit);
         IPage<UserInfo> pageModel = userInfoService.selectPage(pageparam, userInfoQueryVo);
         return Result.ok(pageModel);
+    }
+
+    /**
+     * 用户锁定
+     * @param userId
+     * @param status
+     * @return
+     */
+    @GetMapping("lock/{userId}/{status}")
+    public Result lock(@PathVariable Long userId, @PathVariable Integer status) {
+        userInfoService.lock(userId, status);
+        return Result.ok();
 
     }
+
 }

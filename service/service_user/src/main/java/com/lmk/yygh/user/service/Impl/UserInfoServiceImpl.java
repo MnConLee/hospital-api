@@ -165,6 +165,20 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
     }
 
     /**
+     * 用户锁定
+     * @param userId
+     * @param status
+     */
+    @Override
+    public void lock(Long userId, Integer status) {
+        if (status.intValue() == 0 || status.intValue() == 1) {
+            UserInfo userInfo = baseMapper.selectById(userId);
+            userInfo.setStatus(status);
+            baseMapper.updateById(userInfo);
+        }
+    }
+
+    /**
      * 用户信息编号处理
      *
      * @param userInfo
