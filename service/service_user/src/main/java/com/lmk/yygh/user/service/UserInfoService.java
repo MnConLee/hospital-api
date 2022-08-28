@@ -1,9 +1,12 @@
 package com.lmk.yygh.user.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.lmk.yygh.model.user.UserInfo;
 import com.lmk.yygh.vo.user.LoginVo;
 import com.lmk.yygh.vo.user.UserAuthVo;
+import com.lmk.yygh.vo.user.UserInfoQueryVo;
 
 import java.util.Map;
 
@@ -18,4 +21,6 @@ public interface UserInfoService extends IService<UserInfo> {
     UserInfo selectWxInfoByOpenid(String openid);
 
     void userAuth(Long userId, UserAuthVo userAuthVo);
+
+    IPage<UserInfo> selectPage(Page<UserInfo> pageparam, UserInfoQueryVo userInfoQueryVo);
 }

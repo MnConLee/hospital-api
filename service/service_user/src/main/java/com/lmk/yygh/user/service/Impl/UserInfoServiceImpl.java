@@ -1,6 +1,8 @@
 package com.lmk.yygh.user.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lmk.yygh.common.exception.YyghException;
 import com.lmk.yygh.common.helper.JwtHelper;
@@ -11,6 +13,7 @@ import com.lmk.yygh.user.mapper.UserInfoMapper;
 import com.lmk.yygh.user.service.UserInfoService;
 import com.lmk.yygh.vo.user.LoginVo;
 import com.lmk.yygh.vo.user.UserAuthVo;
+import com.lmk.yygh.vo.user.UserInfoQueryVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -27,8 +30,10 @@ import java.util.Map;
 public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> implements UserInfoService {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
+
     /**
      * 用户手机登录
+     *
      * @param loginVo
      * @return
      */
@@ -49,9 +54,9 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         //如果没有经过微信填充值则走短信
         UserInfo userInfo = null;
         //绑定手机号码
-        if(!StringUtils.isEmpty(loginVo.getOpenid())) {
+        if (!StringUtils.isEmpty(loginVo.getOpenid())) {
             userInfo = this.selectWxInfoByOpenid(loginVo.getOpenid());
-            if(null != userInfo) {
+            if (null != userInfo) {
                 userInfo.setPhone(loginVo.getPhone());
                 this.updateById(userInfo);
             } else {
@@ -117,5 +122,59 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         userInfo.setAuthStatus(AuthStatusEnum.AUTH_RUN.getStatus());
         //进行信息更新
         baseMapper.updateById(userInfo);
+    }
+
+    /**
+     * 用户列表
+     *
+     * @param pageparam
+     * @param userInfoQueryVo
+     * @return
+     */
+    @Override
+    public IPage<UserInfo> selectPage(Page<UserInfo> pageparam, UserInfoQueryVo userInfoQueryVo) {
+        String keywordName = userInfoQueryVo.getKeyword();
+        Integer status = userInfoQueryVo.getStatus();
+        Integer authStatus = userInfoQueryVo.getAuthStatus();
+        //开始时间
+        String createTimeBegin = userInfoQueryVo.getCreateTimeBegin();
+        //结束时间
+        String createTimeEnd = userInfoQueryVo.getCreateTimeEnd();
+        //对条件值进行非空判断
+        QueryWrapper<UserInfo> wrapper = new QueryWrapper<>();
+        if (!StringUtils.isEmpty(keywordName)) {
+            wrapper.like("name", keywordName);
+        }
+        if (!StringUtils.isEmpty(status)) {
+            wrapper.eq("status", status);
+        }
+        if (!StringUtils.isEmpty(authStatus)) {
+            wrapper.eq("auth_status", authStatus);
+        }
+        if (!StringUtils.isEmpty(createTimeBegin)) {
+            wrapper.ge("create_time", createTimeBegin);
+        }
+        if (!StringUtils.isEmpty(createTimeEnd)) {
+            wrapper.le("create_time", createTimeEnd);
+        }
+        Page<UserInfo> userInfoPage = baseMapper.selectPage(pageparam, wrapper);
+        userInfoPage.getRecords().stream().forEach(item -> {
+            this.packageUserInfo(item);
+        });
+        return userInfoPage;
+    }
+
+    /**
+     * 用户信息编号处理
+     *
+     * @param userInfo
+     */
+    private UserInfo packageUserInfo(UserInfo userInfo) {
+        //处理认证状态编码
+        userInfo.getParam().put("authStatusString", AuthStatusEnum.getStatusNameByStatus(userInfo.getAuthStatus()));
+        String statusString = userInfo.getStatus().intValue() == 0 ? "锁定" : "正常";
+        userInfo.getParam().put("statusString", statusString);
+        return userInfo;
+
     }
 }
