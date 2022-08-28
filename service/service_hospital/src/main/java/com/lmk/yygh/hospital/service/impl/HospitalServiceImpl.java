@@ -1,11 +1,14 @@
 package com.lmk.yygh.hospital.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.lmk.yygh.cmn.client.DictFeignClient;
 import com.lmk.yygh.hospital.repository.HospitalRepository;
 import com.lmk.yygh.hospital.service.HospitalService;
 import com.lmk.yygh.model.hosp.Hospital;
+import com.lmk.yygh.model.hosp.HospitalSet;
 import com.lmk.yygh.vo.hosp.HospitalQueryVo;
+import com.lmk.yygh.vo.order.SignInfoVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -161,6 +164,8 @@ public class HospitalServiceImpl implements HospitalService {
         hospital.setBookingRule(null);
         return result;
     }
+
+
 
     /**
      * 获取查询list集合，遍历进行医院等级封装

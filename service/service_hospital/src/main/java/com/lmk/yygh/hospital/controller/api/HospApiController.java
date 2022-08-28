@@ -3,10 +3,15 @@ package com.lmk.yygh.hospital.controller.api;
 import com.lmk.yygh.common.result.Result;
 import com.lmk.yygh.hospital.service.DepartmentService;
 import com.lmk.yygh.hospital.service.HospitalService;
+import com.lmk.yygh.hospital.service.HospitalSetService;
 import com.lmk.yygh.hospital.service.ScheduleService;
 import com.lmk.yygh.model.hosp.Hospital;
+import com.lmk.yygh.model.hosp.Schedule;
 import com.lmk.yygh.vo.hosp.DepartmentVo;
 import com.lmk.yygh.vo.hosp.HospitalQueryVo;
+import com.lmk.yygh.vo.hosp.ScheduleOrderVo;
+import com.lmk.yygh.vo.hosp.ScheduleQueryVo;
+import com.lmk.yygh.vo.order.SignInfoVo;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +37,8 @@ public class HospApiController {
     private DepartmentService departmentService;
     @Autowired
     private ScheduleService scheduleService;
+    @Autowired
+    private HospitalSetService hospitalSetService;
 
     /**
      * 查询医院列表
@@ -129,6 +136,41 @@ public class HospApiController {
             @ApiParam(name = "workDate", value = "排班日期", required = true)
             @PathVariable String workDate) {
         return Result.ok(scheduleService.getScheduleDetail(hoscode, depcode, workDate));
+    }
+
+    /**
+     * 根据排班id获取数据
+     * @param scheduleId
+     * @return
+     */
+    @ApiOperation(value = "根据排班id获取数据")
+    @GetMapping("getSchedule/{scheduleId}")
+    public Result getSchedule(@PathVariable String scheduleId) {
+        Schedule schedule = scheduleService.getScheduleId(scheduleId);
+        return Result.ok(schedule);
+    }
+
+    /**
+     * 根据排班id获取预约下单数据
+     * @param scheduleId
+     * @return
+     */
+    @ApiOperation(value = "根据排班id获取预约下单数据")
+    @GetMapping("inner/getScheduleOrderVo/{scheduleId}")
+    public ScheduleOrderVo getScheduleOrderVo(@PathVariable String scheduleId) {
+        return scheduleService.getScheduleOrderVo(scheduleId);
+    }
+
+    /**
+     * 获取医院签名信息
+     * @param hoscode
+     * @return
+     */
+    @ApiOperation(value = "获取医院签名信息")
+    @GetMapping("inner/getSignInfoVo/{hoscode}")
+    public SignInfoVo getSignInfoVo(@PathVariable String hoscode) {
+        return hospitalSetService.getSignInfoVo(hoscode);
+
     }
 
 

@@ -3,6 +3,7 @@ package com.lmk.yygh.hospital.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.lmk.yygh.model.hosp.Hospital;
 import com.lmk.yygh.model.hosp.HospitalSet;
+import com.lmk.yygh.vo.order.SignInfoVo;
 
 import java.util.Map;
 
@@ -15,4 +16,5 @@ public interface HospitalSetService extends IService<HospitalSet> {
 
     String getSignKey(String hoscode);
 
+    SignInfoVo getSignInfoVo(String hoscode);
 }

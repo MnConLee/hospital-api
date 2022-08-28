@@ -4,6 +4,7 @@ import com.lmk.yygh.common.result.Result;
 import com.lmk.yygh.common.utils.AuthContextHolder;
 import com.lmk.yygh.model.user.Patient;
 import com.lmk.yygh.user.service.PatientService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -79,6 +80,18 @@ public class PatienApiController {
     public Result removePatient(@PathVariable Long id) {
         patientService.removeById(id);
         return Result.ok();
+    }
+
+    /**
+     * 内部使用获取就诊人
+     * @param id
+     * @return
+     */
+    @ApiOperation(value = "获取就诊人")
+    @GetMapping("inner/get/{id}")
+    public Patient getPatientOrder(@PathVariable Long id) {
+        Patient patient = patientService.getPatientId(id);
+        return patient;
     }
 
 

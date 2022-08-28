@@ -2,6 +2,7 @@ package com.lmk.yygh.hospital.service;
 
 import com.lmk.yygh.model.hosp.Hospital;
 import com.lmk.yygh.vo.hosp.HospitalQueryVo;
+import com.lmk.yygh.vo.order.SignInfoVo;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -28,4 +29,5 @@ public interface HospitalService {
     List<Hospital> findByHosname(String hosname);
 
     Map<String, Object> findHospDetailByhoscode(String hoscode);
+
 }

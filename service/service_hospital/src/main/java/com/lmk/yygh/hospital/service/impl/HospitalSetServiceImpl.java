@@ -9,6 +9,7 @@ import com.lmk.yygh.hospital.mapper.HospitalSetMapper;
 import com.lmk.yygh.hospital.service.HospitalSetService;
 import com.lmk.yygh.model.hosp.Hospital;
 import com.lmk.yygh.model.hosp.HospitalSet;
+import com.lmk.yygh.vo.order.SignInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,5 +55,19 @@ public class HospitalSetServiceImpl  extends ServiceImpl<HospitalSetMapper, Hosp
         wrapper.eq("hoscode", hoscode);
         HospitalSet hospitalSet = baseMapper.selectOne(wrapper);
         return hospitalSet.getSignKey();
+    }
+
+    @Override
+    public SignInfoVo getSignInfoVo(String hoscode) {
+        QueryWrapper<HospitalSet> wrapper = new QueryWrapper<>();
+        wrapper.eq("hoscode", hoscode);
+        HospitalSet hospitalSet = baseMapper.selectOne(wrapper);
+        if (null == hospitalSet) {
+            throw new YyghException(ResultCodeEnum.HOSPITAL_OPEN);
+        }
+        SignInfoVo signInfoVo = new SignInfoVo();
+        signInfoVo.setApiUrl(hospitalSet.getApiUrl());
+        signInfoVo.setSignKey(hospitalSet.getSignKey());
+        return signInfoVo;
     }
 }
