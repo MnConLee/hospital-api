@@ -3,10 +3,12 @@ package com.lmk.yygh.hospital.controller.api;
 import com.lmk.yygh.common.result.Result;
 import com.lmk.yygh.hospital.service.DepartmentService;
 import com.lmk.yygh.hospital.service.HospitalService;
+import com.lmk.yygh.hospital.service.ScheduleService;
 import com.lmk.yygh.model.hosp.Hospital;
 import com.lmk.yygh.vo.hosp.DepartmentVo;
 import com.lmk.yygh.vo.hosp.HospitalQueryVo;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +30,9 @@ public class HospApiController {
     private HospitalService hospitalService;
     @Autowired
     private DepartmentService departmentService;
+    @Autowired
+    private ScheduleService scheduleService;
+
     /**
      * 查询医院列表
      *
@@ -47,6 +52,7 @@ public class HospApiController {
 
     /**
      * 根据医院名称查询
+     *
      * @param hosname
      * @return
      */
@@ -59,18 +65,20 @@ public class HospApiController {
 
     /**
      * 根据医院编号获取科室
+     *
      * @param hoscode
      * @return
      */
     @ApiOperation(value = "根据医院编号获取科室")
     @GetMapping("department/{hoscode}")
-    public Result index(@PathVariable String hoscode){
+    public Result index(@PathVariable String hoscode) {
         List<DepartmentVo> list = departmentService.findDeptTree(hoscode);
         return Result.ok(list);
     }
 
     /**
      * 根据医院编号获取医院预约挂号详情
+     *
      * @param hoscode
      * @return
      */
@@ -80,4 +88,49 @@ public class HospApiController {
         Map<String, Object> map = hospitalService.findHospDetailByhoscode(hoscode);
         return Result.ok(map);
     }
+
+    /**
+     * 获取可预约排班数据
+     * @param page
+     * @param limit
+     * @param hoscode
+     * @param depcode
+     * @return
+     */
+    @ApiOperation(value = "获取可预约排班数据")
+    @GetMapping("auth/getBookingScheduleRule/{page}/{limit}/{hoscode}/{depcode}")
+    public Result getBookingSchedule(
+            @ApiParam(name = "page", value = "当前页码", required = true)
+            @PathVariable Integer page,
+            @ApiParam(name = "limit", value = "每页记录数", required = true)
+            @PathVariable Integer limit,
+            @ApiParam(name = "hoscode", value = "医院code", required = true)
+            @PathVariable String hoscode,
+            @ApiParam(name = "depcode", value = "科室code", required = true)
+            @PathVariable String depcode) {
+        return Result.ok(scheduleService.getBookingScheduleRule(page, limit, hoscode, depcode));
+    }
+
+
+    /**
+     * 获取当日排班数据
+     * @param hoscode
+     * @param depcode
+     * @param workDate
+     * @return
+     */
+    @ApiOperation(value = "获取当日排班数据")
+    @GetMapping("auth/findScheduleList/{hoscode}/{depcode}/{workDate}")
+    public Result findScheduleList(
+            @ApiParam(name = "hoscode", value = "医院code", required = true)
+            @PathVariable String hoscode,
+            @ApiParam(name = "depcode", value = "科室code", required = true)
+            @PathVariable String depcode,
+            @ApiParam(name = "workDate", value = "排班日期", required = true)
+            @PathVariable String workDate) {
+        return Result.ok(scheduleService.getScheduleDetail(hoscode, depcode, workDate));
+    }
+
+
 }
+
