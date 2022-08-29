@@ -43,5 +43,10 @@
             <artifactId>jetty-util</artifactId>
             <version>9.3.7.v20160115</version>
         </dependency>
+        <dependency>
+            <groupId>com.lmk</groupId>
+            <artifactId>rabbit_util</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 </project>

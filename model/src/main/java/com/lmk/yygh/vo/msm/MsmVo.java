@@ -1,6 +1,7 @@
 package com.lmk.yygh.vo.msm;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -11,8 +12,8 @@ import java.util.Map;
 @ApiModel(description = "短信实体")
 public class MsmVo {
 
-    @ApiModelProperty(value = "mail")
-    private String mail;
+    @ApiModelProperty(value = "phone")
+    private String phone;
 
     @ApiModelProperty(value = "短信模板code")
     private String templateCode;

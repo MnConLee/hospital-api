@@ -1,6 +1,12 @@
 server:
     port: 8204
 spring:
+    #rabbitmq地址
+    rabbitmq:
+        host: localhost
+        port: 5672
+        username: guest
+        password: guest
     application:
         name: service-msm
     cloud:
@@ -22,3 +28,4 @@ spring:
                 min-idle: 0
         port: 6379
         timeout: 1800000
+

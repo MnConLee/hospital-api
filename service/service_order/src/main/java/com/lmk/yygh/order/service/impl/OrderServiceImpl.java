@@ -2,6 +2,8 @@ package com.lmk.yygh.order.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.lmk.common.rabbit.constant.MqConst;
+import com.lmk.common.rabbit.service.RabbitService;
 import com.lmk.yygh.common.exception.YyghException;
 import com.lmk.yygh.common.helper.HttpRequestHelper;
 import com.lmk.yygh.common.result.ResultCodeEnum;
@@ -13,6 +15,8 @@ import com.lmk.yygh.order.mapper.OrderMapper;
 import com.lmk.yygh.order.service.OrderService;
 import com.lmk.yygh.user.client.PatientFeignClient;
 import com.lmk.yygh.vo.hosp.ScheduleOrderVo;
+import com.lmk.yygh.vo.msm.MsmVo;
+import com.lmk.yygh.vo.order.OrderMqVo;
 import com.lmk.yygh.vo.order.SignInfoVo;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
@@ -32,7 +36,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderInfo> implem
     @Autowired
     private PatientFeignClient patientFeignClient;
     @Autowired
-    protected HospitalFeignClient hospitalFeignClient;
+    private HospitalFeignClient hospitalFeignClient;
+    @Autowired
+    private RabbitService rabbitService;
     /**
      * 生成挂号订单
      * @param scheduleId
@@ -120,7 +126,28 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderInfo> implem
             //排班可预约数
             Integer availableNumber = jsonObject.getInteger("availableNumber");
             //TODO 发送mq消息，号源更新和短信通知
-
+            //发送mq，号源更新
+            OrderMqVo orderMqVo = new OrderMqVo();
+            orderMqVo.setScheduleId(scheduleId);
+            orderMqVo.setReservedNumber(reservedNumber);
+            orderMqVo.setAvailableNumber(availableNumber);
+           //短信提示
+            MsmVo msmVo = new MsmVo();
+            msmVo.setPhone(orderInfo.getPatientPhone());
+            String reserveDate =
+                    new DateTime(orderInfo.getReserveDate()).toString("yyyy-MM-dd")
+                            + (orderInfo.getReserveTime()==0 ? "上午": "下午");
+            Map<String,Object> param = new HashMap<String,Object>(){{
+                put("title", orderInfo.getHosname()+"|"+orderInfo.getDepname()+"|"+orderInfo.getTitle());
+                put("amount", orderInfo.getAmount());
+                put("reserveDate", reserveDate);
+                put("name", orderInfo.getPatientName());
+                put("quitTime", new DateTime(orderInfo.getQuitTime()).toString("yyyy-MM-dd HH:mm"));
+            }};
+            msmVo.setParam(param);
+            orderMqVo.setMsmVo(msmVo);
+            //发送
+            rabbitService.sendMessage(MqConst.EXCHANGE_DIRECT_ORDER, MqConst.ROUTING_ORDER, orderMqVo);
         } else {
             throw new YyghException(result.getString("message"),ResultCodeEnum.FAIL.getCode());
         }

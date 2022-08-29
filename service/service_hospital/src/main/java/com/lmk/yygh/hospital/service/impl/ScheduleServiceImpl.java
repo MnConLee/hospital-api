@@ -357,6 +357,16 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
     }
 
     /**
+     * 更新排班信息 用于mq
+     * @param schedule
+     */
+    @Override
+    public void update(Schedule schedule) {
+        schedule.setUpdateTime(new Date());
+        scheduleRepository.save(schedule);
+    }
+
+    /**
      * 获取可预约日期分页数据
      * dateList->总的可预约日期的集合，pageDateList->当前页可预约天数的集合，
      * start->当前页的首个天数的索引，end-1->当前页最后一个天数的索引

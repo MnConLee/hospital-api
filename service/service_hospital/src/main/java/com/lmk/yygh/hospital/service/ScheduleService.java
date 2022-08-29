@@ -30,4 +30,9 @@ public interface ScheduleService extends IService<Schedule> {
     Schedule getScheduleId(String scheduleId);
 
     ScheduleOrderVo getScheduleOrderVo(String scheduleId);
+
+    /**
+     * 更新排班数据
+     */
+    void update(Schedule schedule);
 }
