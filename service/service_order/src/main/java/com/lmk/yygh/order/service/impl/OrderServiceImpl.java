@@ -1,6 +1,10 @@
 package com.lmk.yygh.order.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lmk.common.rabbit.constant.MqConst;
 import com.lmk.common.rabbit.service.RabbitService;
@@ -17,11 +21,13 @@ import com.lmk.yygh.user.client.PatientFeignClient;
 import com.lmk.yygh.vo.hosp.ScheduleOrderVo;
 import com.lmk.yygh.vo.msm.MsmVo;
 import com.lmk.yygh.vo.order.OrderMqVo;
+import com.lmk.yygh.vo.order.OrderQueryVo;
 import com.lmk.yygh.vo.order.SignInfoVo;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,8 +47,29 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderInfo> implem
     private RabbitService rabbitService;
 
     /**
+     * 获取订单信息
+     * @param orderId
+     * @return
+     */
+    @Override
+    public OrderInfo getOrder(String orderId) {
+        OrderInfo orderInfo = baseMapper.selectById(orderId);
+        return this.packOrderInfo(orderInfo);
+    }
+
+
+    /**
+     * 封装orderInfo(status转)
+     * @param orderInfo
+     * @return
+     */
+    private OrderInfo packOrderInfo(OrderInfo orderInfo) {
+        orderInfo.getParam().put("orderStatusString", OrderStatusEnum.getStatusNameByStatus(orderInfo.getOrderStatus()));
+        return orderInfo;
+    }
+
+    /**
      * 生成挂号订单
-     *
      * @param scheduleId
      * @param patientId
      * @return
@@ -162,5 +189,48 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderInfo> implem
             throw new YyghException(result.getString("message"), ResultCodeEnum.FAIL.getCode());
         }
         return orderInfo.getId();
+    }
+
+    /**
+     * 查询订单列表
+     * @param pageParam
+     * @param orderQueryVo
+     * @return
+     */
+    //TODO 需要增加userid，否则查询的是所有用户的订单
+    @Override
+    public IPage<OrderInfo> selectPage(Page<OrderInfo> pageParam, OrderQueryVo orderQueryVo) {
+        //医院名称的模糊查询
+        String name = orderQueryVo.getKeyword();
+        Long patientId = orderQueryVo.getPatientId();
+        String orderStatus = orderQueryVo.getOrderStatus();
+        //安排时间
+        String reserveDate = orderQueryVo.getReserveDate();
+        String createTimeBegin = orderQueryVo.getCreateTimeBegin();
+        String createTimeEnd = orderQueryVo.getCreateTimeEnd();
+        QueryWrapper<OrderInfo> wrapper = new QueryWrapper<>();
+        if (!StringUtils.isEmpty(name)) {
+            wrapper.like("hosname", name);
+        }
+        if (!StringUtils.isEmpty(patientId)) {
+            wrapper.eq("patient_id", patientId);
+        }
+        if (!StringUtils.isEmpty(orderStatus)) {
+            wrapper.eq("order_status", orderStatus);
+        }
+        if (!StringUtils.isEmpty(reserveDate)) {
+            wrapper.eq("reserve_date", reserveDate);
+        }
+        if (!StringUtils.isEmpty(createTimeBegin)) {
+            wrapper.ge("create_time", createTimeBegin);
+        }
+        if (!StringUtils.isEmpty(createTimeEnd)) {
+            wrapper.le("create_time", createTimeEnd);
+        }
+        IPage<OrderInfo> pages = baseMapper.selectPage(pageParam, wrapper);
+        pages.getRecords().stream().forEach(item -> {
+            this.packOrderInfo(item);
+        });
+        return pages;
     }
 }

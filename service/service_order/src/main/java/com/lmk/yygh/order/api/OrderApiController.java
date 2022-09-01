@@ -1,14 +1,20 @@
 package com.lmk.yygh.order.api;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lmk.yygh.common.result.Result;
+import com.lmk.yygh.common.utils.AuthContextHolder;
+import com.lmk.yygh.enums.OrderStatusEnum;
+import com.lmk.yygh.model.order.OrderInfo;
+import com.lmk.yygh.model.user.UserInfo;
 import com.lmk.yygh.order.service.OrderService;
+import com.lmk.yygh.vo.order.OrderQueryVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author 李明康
@@ -34,4 +40,50 @@ public class OrderApiController {
         Long orderId = orderService.saveOrder(scheduleId, patientId);
         return Result.ok(orderId);
     }
+
+
+    /**
+     * 获取订单信息
+     * @param orderId
+     * @return
+     */
+    @ApiOperation(value = "获取订单信息")
+    @GetMapping("auth/getOrders/{orderId}")
+    public Result getOrders(@PathVariable String orderId) {
+        OrderInfo orderInfo = orderService.getOrder(orderId);
+        return Result.ok(orderInfo);
+    }
+
+
+    /**
+     * 获取订单列表
+     * @param page
+     * @param limit
+     * @param orderQueryVo
+     * @param request
+     * @return
+     */
+    @ApiOperation(value = "获取订单列表")
+    @GetMapping("auth/{page}/{limit}")
+    public Result list(@PathVariable long page,
+                       @PathVariable long limit,
+                       OrderQueryVo orderQueryVo,
+                       HttpServletRequest request) {
+
+        orderQueryVo.setUserId(AuthContextHolder.getUserId(request));
+        Page<OrderInfo> pageParam = new Page<>(page, limit);
+        IPage<OrderInfo> pageModel = orderService.selectPage(pageParam, orderQueryVo);
+        return Result.ok(pageModel);
+    }
+
+    /**
+     * 获取订单状态
+     * @return
+     */
+    @ApiOperation(value = "获取订单状态")
+    @GetMapping("auth/getStatusList")
+    public Result getStatusList(){
+        return Result.ok(OrderStatusEnum.getStatusList());
+    }
+
 }
