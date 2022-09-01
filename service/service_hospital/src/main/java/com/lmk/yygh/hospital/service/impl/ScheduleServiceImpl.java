@@ -315,18 +315,22 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
 
         ScheduleOrderVo scheduleOrderVo = new ScheduleOrderVo();
         //获取排班信息
-        Schedule schedule = baseMapper.selectById(scheduleId);
-        if (schedule == null) {
+        Schedule schedule = this.getScheduleId(scheduleId);
+        //Schedule schedule = baseMapper.selectById(scheduleId);
+        if(schedule == null) {
             throw new YyghException(ResultCodeEnum.PARAM_ERROR);
         }
+        //获取预约规则信息
         Hospital hospital = hospitalService.getByHoscode(schedule.getHoscode());
-        if (hospital == null) {
+        if(hospital == null) {
             throw new YyghException(ResultCodeEnum.PARAM_ERROR);
         }
         BookingRule bookingRule = hospital.getBookingRule();
-        if (bookingRule == null) {
+        if(bookingRule == null) {
             throw new YyghException(ResultCodeEnum.PARAM_ERROR);
         }
+
+        //把获取数据设置到scheduleOrderVo
         scheduleOrderVo.setHoscode(schedule.getHoscode());
         scheduleOrderVo.setHosname(hospitalService.getHospName(schedule.getHoscode()));
         scheduleOrderVo.setDepcode(schedule.getDepcode());
@@ -337,6 +341,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
         scheduleOrderVo.setReserveDate(schedule.getWorkDate());
         scheduleOrderVo.setReserveTime(schedule.getWorkTime());
         scheduleOrderVo.setAmount(schedule.getAmount());
+
         //退号截止天数（如：就诊前一天为-1，当天为0）
         int quitDay = bookingRule.getQuitDay();
         DateTime quitTime = this.getDateTime(new DateTime(schedule.getWorkDate()).plusDays(quitDay).toDate(), bookingRule.getQuitTime());
@@ -352,7 +357,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
 
         //当天停止挂号时间
         DateTime stopTime = this.getDateTime(new Date(), bookingRule.getStopTime());
-        scheduleOrderVo.setStartTime(stopTime.toDate());
+        scheduleOrderVo.setStartTime(startTime.toDate());
         return scheduleOrderVo;
     }
 

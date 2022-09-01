@@ -168,9 +168,10 @@ public class HospApiController {
      */
     @ApiOperation(value = "获取医院签名信息")
     @GetMapping("inner/getSignInfoVo/{hoscode}")
-    public SignInfoVo getSignInfoVo(@PathVariable String hoscode) {
+    public SignInfoVo getSignInfoVo(
+            @ApiParam(name = "hoscode", value = "医院code", required = true)
+            @PathVariable("hoscode") String hoscode) {
         return hospitalSetService.getSignInfoVo(hoscode);
-
     }
 
 

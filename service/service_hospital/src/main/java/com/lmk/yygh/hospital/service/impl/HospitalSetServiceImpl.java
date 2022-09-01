@@ -57,12 +57,17 @@ public class HospitalSetServiceImpl  extends ServiceImpl<HospitalSetMapper, Hosp
         return hospitalSet.getSignKey();
     }
 
+    /**
+     * 远程调用获取签名
+     * @param hoscode
+     * @return
+     */
     @Override
     public SignInfoVo getSignInfoVo(String hoscode) {
         QueryWrapper<HospitalSet> wrapper = new QueryWrapper<>();
-        wrapper.eq("hoscode", hoscode);
+        wrapper.eq("hoscode",hoscode);
         HospitalSet hospitalSet = baseMapper.selectOne(wrapper);
-        if (null == hospitalSet) {
+        if(null == hospitalSet) {
             throw new YyghException(ResultCodeEnum.HOSPITAL_OPEN);
         }
         SignInfoVo signInfoVo = new SignInfoVo();

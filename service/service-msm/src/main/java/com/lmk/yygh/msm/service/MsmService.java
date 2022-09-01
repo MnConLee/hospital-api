@@ -12,5 +12,12 @@ public interface MsmService {
     /**
      * mq使用发送短信
      */
-    boolean send(MsmVo msmVo);
+    // boolean send(MsmVo msmVo);
+
+    /**
+     * mq异步发送短信改
+     * @param phone
+     * @return
+     */
+    boolean sendOrderSuccess(String phone);
 }
