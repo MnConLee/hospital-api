@@ -22,6 +22,21 @@ spring:
         active: dev
     rabbitmq:
         host: localhost
-        password: guest
         port: 5672
         username: guest
+        password: guest
+    redis:
+        database: 0
+        host: localhost
+        lettuce:
+            pool:
+                max-active: 20
+                max-idle: 5
+                max-wait: -1
+                min-idle: 0
+        port: 6379
+        timeout: 1800000
+weixin:
+    appid: wx74862e0dfcf69954
+    partner: 1558950191
+    partnerkey: T6m9iK73b0kn9g5v426MKfHQH7X8rKwb
