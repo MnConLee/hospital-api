@@ -92,4 +92,35 @@ public class WeixinServiceImpl implements WeixinService {
 
 
     }
+
+    /**
+     * 查询订单状态
+     * @param orderId
+     * @return
+     */
+    @Override
+    public Map<String, String> queryPayStatus(Long orderId) {
+        try {
+            //根据orderId获取订单信息
+            OrderInfo orderInfo = orderService.getById(orderId);
+            //封装提交参数
+            HashMap paramMap = new HashMap();
+            paramMap.put("appid", ConstantPropertiesUtils.APPID);
+            paramMap.put("mch_id", ConstantPropertiesUtils.PARTNER);
+            paramMap.put("out_trade_no", orderInfo.getOutTradeNo());
+            paramMap.put("nonce_str", WXPayUtil.generateNonceStr());
+            //设置请求内容
+            HttpClient client = new HttpClient("https://api.mch.weixin.qq.com/pay/orderquery");
+            client.setXmlParam(WXPayUtil.generateSignedXml(paramMap, ConstantPropertiesUtils.PARTNERKEY));
+            client.setHttps(true);
+            client.post();
+            //得到微信接口返回数据
+            String xml = client.getContent();
+            Map<String, String> resultMap = WXPayUtil.xmlToMap(xml);
+            //把接口数据返回
+            return resultMap;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }

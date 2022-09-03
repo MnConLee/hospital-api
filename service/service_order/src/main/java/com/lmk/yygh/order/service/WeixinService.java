@@ -13,4 +13,6 @@ public interface WeixinService {
      * @return
      */
     Map createNative(long orderId);
+
+    Map<String, String> queryPayStatus(Long orderId);
 }

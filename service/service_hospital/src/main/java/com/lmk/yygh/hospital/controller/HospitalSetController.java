@@ -41,7 +41,6 @@ public class HospitalSetController {
 
     /**
      * 逻辑删除医院设置
-     *
      * @param id
      * @return
      */
@@ -59,7 +58,6 @@ public class HospitalSetController {
 
     /**
      * 条件查询带分页
-     *
      * @param current
      * @param limit
      * @param hospitalSetQueryVo
