@@ -15,4 +15,12 @@ public interface WeixinService {
     Map createNative(long orderId);
 
     Map<String, String> queryPayStatus(Long orderId);
+
+    /**
+     * 微信退款调用
+     *
+     * @param orderId
+     * @return
+     */
+    Boolean refund(Long orderId);
 }

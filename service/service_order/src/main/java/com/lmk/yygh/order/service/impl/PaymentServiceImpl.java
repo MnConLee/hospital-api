@@ -10,6 +10,7 @@ import com.lmk.yygh.enums.PaymentTypeEnum;
 import com.lmk.yygh.hosp.client.HospitalFeignClient;
 import com.lmk.yygh.model.order.OrderInfo;
 import com.lmk.yygh.model.order.PaymentInfo;
+import com.lmk.yygh.model.order.RefundInfo;
 import com.lmk.yygh.order.mapper.PaymentMapper;
 import com.lmk.yygh.order.service.OrderService;
 import com.lmk.yygh.order.service.PaymentService;
@@ -99,4 +100,21 @@ public class PaymentServiceImpl extends ServiceImpl<PaymentMapper, PaymentInfo> 
         JSONObject result = HttpRequestHelper.sendRequest(reqMap, signInfoVo.getApiUrl() + "/order/updatePayStatus");
 
     }
+
+    /**
+     * 获取支付记录
+     * @param orderId
+     * @param paymentType
+     * @return
+     */
+    @Override
+    public PaymentInfo getPaymentInfo(Long orderId, Integer paymentType) {
+        QueryWrapper<PaymentInfo> wrapper = new QueryWrapper<>();
+        wrapper.eq("order_id", orderId);
+        wrapper.eq("payment_type", paymentType);
+        PaymentInfo paymentInfo = baseMapper.selectOne(wrapper);
+        return paymentInfo;
+    }
+
+
 }

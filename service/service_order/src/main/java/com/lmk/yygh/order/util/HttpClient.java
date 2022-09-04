@@ -127,8 +127,8 @@ public class HttpClient {
         try {
             if (isHttps) {
                 if(isCert) {
-                    //TODO 先设空，需要完善 pathname:ConstantPropertiesUtils.CERT
-                    FileInputStream inputStream = new FileInputStream(new File(""));
+                    // 此处为微信证书地址(使用了工具类调取了配置文件)
+                    FileInputStream inputStream = new FileInputStream(new File(ConstantPropertiesUtils.CERT));
                     KeyStore keystore = KeyStore.getInstance("PKCS12");
                     char[] partnerId2charArray = certPassword.toCharArray();
                     keystore.load(inputStream, partnerId2charArray);

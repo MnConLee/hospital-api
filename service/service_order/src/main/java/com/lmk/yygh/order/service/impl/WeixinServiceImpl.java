@@ -1,11 +1,16 @@
 package com.lmk.yygh.order.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.github.wxpay.sdk.WXPayConstants;
 import com.github.wxpay.sdk.WXPayUtil;
-import com.lmk.yygh.enums.PaymentStatusEnum;
 import com.lmk.yygh.enums.PaymentTypeEnum;
+import com.lmk.yygh.enums.RefundStatusEnum;
 import com.lmk.yygh.model.order.OrderInfo;
+import com.lmk.yygh.model.order.PaymentInfo;
+import com.lmk.yygh.model.order.RefundInfo;
 import com.lmk.yygh.order.service.OrderService;
 import com.lmk.yygh.order.service.PaymentService;
+import com.lmk.yygh.order.service.RefundInfoService;
 import com.lmk.yygh.order.service.WeixinService;
 import com.lmk.yygh.order.util.ConstantPropertiesUtils;
 import com.lmk.yygh.order.util.HttpClient;
@@ -13,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -29,6 +35,8 @@ public class WeixinServiceImpl implements WeixinService {
     private PaymentService paymentService;
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private RefundInfoService refundInfoService;
 
     /**
      * 生成微信支付二维码
@@ -122,5 +130,67 @@ public class WeixinServiceImpl implements WeixinService {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    /**
+     * 微信退款操作
+     * @param orderId
+     * @return
+     */
+    @Override
+    public Boolean refund(Long orderId) {
+
+        try {
+            //获取支付记录信息
+            PaymentInfo paymentInfo = paymentService.getPaymentInfo(orderId, PaymentTypeEnum.WEIXIN.getStatus());
+            //添加信息到退款表
+            RefundInfo refundInfo = refundInfoService.saveRefundInfo(paymentInfo);
+            //判断当前订单的状况是否已经退款
+            if (refundInfo.getRefundStatus().intValue() == RefundStatusEnum.REFUND.getStatus().intValue()) {
+                return true;
+            }
+            //调用微信的接口进行退款，封装所需参数
+            Map<String, String> paramMap = new HashMap<>();
+            //公众账号ID
+            paramMap.put("appid",ConstantPropertiesUtils.APPID);
+            //商户编号
+            paramMap.put("mch_id",ConstantPropertiesUtils.PARTNER);
+            paramMap.put("nonce_str",WXPayUtil.generateNonceStr());
+            //微信订单号
+            paramMap.put("transaction_id",paymentInfo.getTradeNo());
+            //商户订单编号
+            paramMap.put("out_trade_no",paymentInfo.getOutTradeNo());
+            //商户退款单号
+            paramMap.put("out_refund_no","tk"+paymentInfo.getOutTradeNo());
+            //演示使用退款1分钱
+//       paramMap.put("total_fee",paymentInfoQuery.getTotalAmount().multiply(new BigDecimal("100")).longValue()+"");
+//       paramMap.put("refund_fee",paymentInfoQuery.getTotalAmount().multiply(new BigDecimal("100")).longValue()+"");
+            paramMap.put("total_fee","1");
+            paramMap.put("refund_fee","1");
+            String paramXml = WXPayUtil.generateSignedXml(paramMap, ConstantPropertiesUtils.PARTNERKEY);
+            //设置调用接口内容
+            HttpClient client = new HttpClient("https://api.mch.weixin.qq.com/secapi/pay/refund");
+            client.setXmlParam(paramXml);
+            client.setHttps(true);
+            //设置证书
+            client.setCert(true);
+            client.setCertPassword(ConstantPropertiesUtils.PARTNER);
+            client.post();
+            //接收返回数据
+            String xml = client.getContent();
+            Map<String, String> resultMap = WXPayUtil.xmlToMap(xml);
+            if (null != resultMap && WXPayConstants.SUCCESS.equalsIgnoreCase(resultMap.get("result_code"))) {
+                refundInfo.setCallbackTime(new Date());
+                refundInfo.setTradeNo(resultMap.get("refund_id"));
+                refundInfo.setRefundStatus(RefundStatusEnum.REFUND.getStatus());
+                refundInfo.setCallbackContent(JSONObject.toJSONString(resultMap));
+                refundInfoService.updateById(refundInfo);
+                return true;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
