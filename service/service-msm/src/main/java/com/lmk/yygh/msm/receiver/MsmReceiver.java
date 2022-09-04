@@ -13,6 +13,8 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 
 /**
  * @author 李明康
@@ -35,7 +37,10 @@ public class MsmReceiver {
             key = {MqConst.ROUTING_MSM_ITEM}))
     public void send(MsmVo msmVo, Message message, Channel channel) {
         String phone = msmVo.getPhone();
-        msmService.sendOrderSuccess(phone);
-
+        //TODO 为了保证测试不出问题，我将电话号码设置为自己的
+        Map<String, Object> param = msmVo.getParam();
+        String code = (String) param.get("code");
+        phone = "18505060741";
+        msmService.sendOrderSuccess(phone, code);
     }
 }

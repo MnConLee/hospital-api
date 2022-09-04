@@ -19,5 +19,5 @@ public interface MsmService {
      * @param phone
      * @return
      */
-    boolean sendOrderSuccess(String phone);
+    boolean sendOrderSuccess(String phone, String code);
 }
