@@ -11,6 +11,7 @@ import com.lmk.common.rabbit.service.RabbitService;
 import com.lmk.yygh.common.exception.YyghException;
 import com.lmk.yygh.common.helper.HttpRequestHelper;
 import com.lmk.yygh.common.result.ResultCodeEnum;
+import com.lmk.yygh.common.utils.MD5;
 import com.lmk.yygh.enums.OrderStatusEnum;
 import com.lmk.yygh.hosp.client.HospitalFeignClient;
 import com.lmk.yygh.model.order.OrderInfo;
@@ -30,10 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * @author 李明康
@@ -102,7 +100,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderInfo> implem
         //向orderInfo设置其他数据
         String outTradeNo = System.currentTimeMillis() + "" + new Random().nextInt(100);
         orderInfo.setOutTradeNo(outTradeNo);
-        orderInfo.setScheduleId(scheduleId);
+        orderInfo.setScheduleId(scheduleOrderVo.getHosScheduleId());
         orderInfo.setUserId(patient.getUserId());
         orderInfo.setPatientId(patientId);
         orderInfo.setPatientName(patient.getName());
@@ -264,7 +262,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderInfo> implem
         reqMap.put("hoscode",orderInfo.getHoscode());
         reqMap.put("hosRecordId",orderInfo.getHosRecordId());
         reqMap.put("timestamp", HttpRequestHelper.getTimestamp());
-        String sign = HttpRequestHelper.getSign(reqMap, signInfoVo.getSignKey());
+        String sign = MD5.encrypt(signInfoVo.getSignKey());
         reqMap.put("sign", sign);
         JSONObject result =
                 HttpRequestHelper.sendRequest(reqMap, signInfoVo.getApiUrl() + "/order/updateCancelStatus");
@@ -303,6 +301,35 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderInfo> implem
             }
         }
         return false;
+    }
+
+    /**
+     * 就诊通知
+     */
+    @Override
+    public void patientTips() {
+        QueryWrapper<OrderInfo> wrapper = new QueryWrapper<>();
+        wrapper.eq("reserve_date", new DateTime().toString("yyyy-MM-dd"));
+        wrapper.ne("order_status", OrderStatusEnum.CANCLE.getStatus());
+        List<OrderInfo> orderInfoList = baseMapper.selectList(wrapper);
+            for (OrderInfo orderInfo: orderInfoList ) {
+                //短信提示
+                MsmVo msmVo = new MsmVo();
+                msmVo.setPhone(orderInfo.getPatientPhone());
+                String reserveDate = new DateTime(orderInfo.getReserveDate()).toString("yyyy-MM-dd") + (orderInfo.getReserveTime()==0 ? "上午": "下午");
+                Map<String,Object> param = new HashMap<String,Object>(){{
+                    put("title", orderInfo.getHosname()+"|"+orderInfo.getDepname()+"|"+orderInfo.getTitle());
+                    put("reserveDate", reserveDate);
+                    put("name", orderInfo.getPatientName());
+                    //自己测试，设置了一个表示订单短信提醒的代码代表提醒
+                    put("code", 222222);
+                }};
+                msmVo.setParam(param);
+                rabbitService.sendMessage(MqConst.EXCHANGE_DIRECT_MSM, MqConst.ROUTING_MSM_ITEM, msmVo);
+            }
+
+
+
     }
 
 
