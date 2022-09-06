@@ -4,7 +4,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.lmk.yygh.model.order.OrderInfo;
+import com.lmk.yygh.vo.order.OrderCountQueryVo;
 import com.lmk.yygh.vo.order.OrderQueryVo;
+
+import java.util.Map;
 
 /**
  * @author 李明康
@@ -20,4 +23,11 @@ public interface OrderService extends IService<OrderInfo> {
     Boolean cancelOrder(Long orderId);
 
     void patientTips();
+
+    /**
+     * 预约统计
+     * @param orderCountQueryVo
+     * @return
+     */
+    Map<String, Object> getCountMap(OrderCountQueryVo orderCountQueryVo);
 }

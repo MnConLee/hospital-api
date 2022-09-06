@@ -300,7 +300,12 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
      */
     @Override
     public Schedule getScheduleId(String scheduleId) {
-        Schedule schedule = scheduleRepository.findById(scheduleId).get();
+
+
+        //使用Repository出现mq队列没有被消费,接收器又一直去消费出现死循环的状况
+        // Schedule schedule = mongoTemplate.findById(scheduleId, Schedule.class);
+        // Schedule schedule = scheduleRepository.findById(scheduleId).get();
+        Schedule schedule = scheduleRepository.getScheduleById(scheduleId);
 
         return this.packageSchedule(schedule);
     }

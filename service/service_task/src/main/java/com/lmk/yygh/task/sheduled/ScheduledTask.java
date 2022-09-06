@@ -20,7 +20,7 @@ public class ScheduledTask {
     //cron表达式，设置执行间隔
 
     /**
-     * 每天8点执行方法，就医题型
+     * 每天8点执行方法，就医题型,因测试使用，固设置为30秒一次
      */
     @Scheduled(cron = "0/30 * * * * ?")
     public void taskPatient() {

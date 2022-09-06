@@ -22,9 +22,7 @@ import com.lmk.yygh.order.service.WeixinService;
 import com.lmk.yygh.user.client.PatientFeignClient;
 import com.lmk.yygh.vo.hosp.ScheduleOrderVo;
 import com.lmk.yygh.vo.msm.MsmVo;
-import com.lmk.yygh.vo.order.OrderMqVo;
-import com.lmk.yygh.vo.order.OrderQueryVo;
-import com.lmk.yygh.vo.order.SignInfoVo;
+import com.lmk.yygh.vo.order.*;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author 李明康
@@ -309,6 +308,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderInfo> implem
     @Override
     public void patientTips() {
         QueryWrapper<OrderInfo> wrapper = new QueryWrapper<>();
+        //就诊当天发送
         wrapper.eq("reserve_date", new DateTime().toString("yyyy-MM-dd"));
         wrapper.ne("order_status", OrderStatusEnum.CANCLE.getStatus());
         List<OrderInfo> orderInfoList = baseMapper.selectList(wrapper);
@@ -322,7 +322,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderInfo> implem
                     put("reserveDate", reserveDate);
                     put("name", orderInfo.getPatientName());
                     //自己测试，设置了一个表示订单短信提醒的代码代表提醒
-                    put("code", 222222);
+                    put("code", "222222");
                 }};
                 msmVo.setParam(param);
                 rabbitService.sendMessage(MqConst.EXCHANGE_DIRECT_MSM, MqConst.ROUTING_MSM_ITEM, msmVo);
@@ -330,6 +330,24 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderInfo> implem
 
 
 
+    }
+
+    /**
+     * 预约统计
+     * @param orderCountQueryVo
+     * @return
+     */
+    @Override
+    public Map<String, Object> getCountMap(OrderCountQueryVo orderCountQueryVo) {
+        List<OrderCountVo> orderCountVoList = baseMapper.selectOrderCount(orderCountQueryVo);
+        //获取x轴需要数据
+        List<String> dateList = orderCountVoList.stream().map(OrderCountVo::getReserveDate).collect(Collectors.toList());
+        //获取y轴需要数据
+        List<Integer> countList = orderCountVoList.stream().map(OrderCountVo::getCount).collect(Collectors.toList());
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("dateList", dateList);
+        map.put("countList", countList);
+        return map;
     }
 
 

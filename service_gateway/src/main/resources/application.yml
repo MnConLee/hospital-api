@@ -31,6 +31,9 @@ spring:
             -   id: service-order
                 predicates: Path=/*/order/**
                 uri: lb://service-order
+            -   id: service-statistics
+                predicates: Path=/*/statistics/**
+                uri: lb://service-statistics
         nacos:
             discovery:
                 server-addr: 127.0.0.1:8848

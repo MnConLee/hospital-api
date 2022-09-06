@@ -8,6 +8,7 @@ import com.lmk.yygh.enums.OrderStatusEnum;
 import com.lmk.yygh.model.order.OrderInfo;
 import com.lmk.yygh.model.user.UserInfo;
 import com.lmk.yygh.order.service.OrderService;
+import com.lmk.yygh.vo.order.OrderCountQueryVo;
 import com.lmk.yygh.vo.order.OrderQueryVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * @author 李明康
@@ -95,6 +97,17 @@ public class OrderApiController {
     public Result cancelOrder(@PathVariable Long orderId) {
         Boolean isOrder = orderService.cancelOrder(orderId);
         return Result.ok(isOrder);
+    }
+
+    /**
+     * 获取订单统计数据
+     * @param orderCountQueryVo
+     * @return
+     */
+    @ApiOperation(value = "获取订单统计数据")
+    @PostMapping("inner/getCountMap")
+    public Map<String, Object> getCountMap(@RequestBody OrderCountQueryVo orderCountQueryVo) {
+        return orderService.getCountMap(orderCountQueryVo);
     }
 
 }

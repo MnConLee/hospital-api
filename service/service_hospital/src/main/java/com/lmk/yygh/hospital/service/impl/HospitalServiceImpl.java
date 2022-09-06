@@ -12,6 +12,7 @@ import com.lmk.yygh.vo.order.SignInfoVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -26,6 +27,8 @@ public class HospitalServiceImpl implements HospitalService {
     private HospitalRepository hospitalRepository;
     @Autowired
     private DictFeignClient dictFeignClient;
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     /**
      * 上传医院
@@ -130,6 +133,7 @@ public class HospitalServiceImpl implements HospitalService {
      */
     @Override
     public String getHospName(String hoscode) {
+
         Hospital hospital = hospitalRepository.getHospitalByHoscode(hoscode);
         if (hospital != null) {
             return hospital.getHosname();
